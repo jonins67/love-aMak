@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>รักเอที่สุดในโลก 💕</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans+Thai:wght@300;400;600&family=Great+Vibes&family=Itim&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink-glow: #ff4791;
+    --purple-glow: #a370ff;
+    --cyan-glow: #50e3c2;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+  }
+  
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; width: 100%; min-height: 100vh; overflow-x: hidden; }
+  
+  body {
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    color: #fff;
+    background: #06010f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 18px 180px; 
+    position: relative;
+  }
+
+  /* 💌 ซองจดหมายเปิดก่อนเข้าเว็บ Overlay */
+  #envelopeOverlay {
+    position: fixed; inset: 0; background: #0b041a; z-index: 100000;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: opacity 1.2s ease, transform 1.2s ease;
+  }
+  .envelope-wrapper {
+    position: relative; width: 320px; height: 200px; background: #1f1138;
+    border-radius: 0 0 12px 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.05); transition: transform 0.5s;
+  }
+  .envelope-wrapper.can-hover:hover { transform: scale(1.03); }
+  .envelope-flap {
+    position: absolute; top: 0; left: 0; width: 0; height: 0;
+    border-left: 160px solid transparent; border-right: 160px solid transparent;
+    border-top: 110px solid #2d1b4e; transform-origin: top;
+    transition: transform 0.6s ease 0.2s; z-index: 3;
+  }
+  .envelope-wrapper.open .envelope-flap {
+    transform: rotateX(180deg); z-index: 1;
+  }
+  
+  /* ✍️ จดหมายลายมือหมึกวิ่ง */
+  .letter-inside {
+    position: absolute; bottom: 10px; width: 280px; height: 170px;
+    background: #fdfaf2; color: #2b2525;
+    border: 1px solid rgba(0,0,0,0.1); border-radius: 8px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.3);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.6s; z-index: 2; padding: 15px; text-align: center;
+    font-family: 'Itim', cursive;
+  }
+  .envelope-wrapper.open .letter-inside {
+    transform: translateY(-110px) scale(1.05);
+  }
+  .heart-seal {
+    position: absolute; z-index: 4; font-size: 36px; filter: drop-shadow(0 4px 10px rgba(255,71,145,0.5));
+    transition: opacity 0.3s;
+  }
+  .envelope-wrapper.open .heart-seal { opacity: 0; pointer-events: none; }
+  
+  .handwritten-line {
+    white-space: nowrap; overflow: hidden; width: 0;
+    border-right: 2px solid transparent; opacity: 0;
+    margin: 4px 0; font-size: 17px;
+  }
+  .envelope-wrapper.open .handwritten-line {
+    opacity: 1;
+    animation: writeText 1.5s steps(30, end) forwards;
+  }
+  .envelope-wrapper.open .line-1 { animation-delay: 1.4s; }
+  .envelope-wrapper.open .line-2 { animation-delay: 2.9s; }
+  .envelope-wrapper.open .line-3 { animation-delay: 4.4s; }
+  
+  @keyframes writeText {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+
+  /* 🌌 Aurora Background */
+  .aurora-bg {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    background: radial-gradient(circle at 50% 50%, #0c021a, #04000a);
+  }
+  .aurora-mesh {
+    position: absolute; inset: -50%; width: 200%; height: 200%;
+    background: 
+      radial-gradient(circle at 20% 30%, var(--pink-glow) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, var(--purple-glow) 0%, transparent 40%),
+      radial-gradient(circle at 40% 80%, var(--cyan-glow) 0%, transparent 35%),
+      radial-gradient(circle at 70% 20%, #ff8ec4 0%, transparent 30%);
+    filter: blur(80px); mix-blend-mode: screen;
+    animation: auroraMove 25s infinite alternate ease-in-out; opacity: 0.45;
+  }
+  .noise-overlay {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.04;
+  }
+  @keyframes auroraMove {
+    0% { transform: rotate(0deg) translate(0px, 0px) scale(1); }
+    50% { transform: rotate(10deg) translate(40px, -60px) scale(1.1); }
+    100% { transform: rotate(-5deg) translate(-30px, 30px) scale(0.95); }
+  }
+
+  /* 🌠 Shooting Stars Layer */
+  .shooting-star {
+    position: fixed; left: 50%; top: 50%; height: 2px;
+    background: linear-gradient(-45deg, #fff, rgba(0, 0, 0, 0));
+    border-radius: 999px; filter: drop-shadow(0 0 6px #fff);
+    animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
+    transform: rotate(-45deg); pointer-events: none; z-index: 1; opacity: 0;
+  }
+  @keyframes tail { 0% { width: 0; } 30% { width: 100px; } 100% { width: 0; } }
+  @keyframes shooting {
+    0% { transform: rotate(-45deg) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    30% { transform: rotate(-45deg) translateX(400px); opacity: 0; }
+    100% { transform: rotate(-45deg) translateX(400px); opacity: 0; }
+  }
+
+  /* ✨ Fireflies Particle Layer */
+  .firefly {
+    position: fixed; width: 4px; height: 4px; background: #fffb96;
+    border-radius: 50%; pointer-events: none; z-index: 2;
+    box-shadow: 0 0 10px #ffea6c, 0 0 20px #ffea6c;
+    animation: drift 10s infinite ease-in-out, flash 3s infinite ease-in-out;
+  }
+  @keyframes drift {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-60px) translateX(30px); }
+  }
+  @keyframes flash { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.9; } }
+
+  /* 🌹 Rose Petal Falling Particle */
+  .petal {
+    position: fixed; pointer-events: none; z-index: 10005;
+    background: linear-gradient(#ff4e79, #d11b47); border-radius: 0 100px 40px 100px;
+    opacity: 0.8; transform-style: preserve-3d; animation: fall linear forwards;
+  }
+  @keyframes fall {
+    0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ✨ Mouse Glow */
+  .mouse-glow {
+    position: fixed; inset: 0; z-index: 2; pointer-events: none;
+    background: radial-gradient(circle 250px at var(--m-x, -1000px) var(--m-y, -1000px), rgba(255, 71, 145, 0.12), transparent 80%);
+    mix-blend-mode: plus-lighter;
+  }
+
+  /* 💎 Glassmorphism Base Panel */
+  .glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(50px) saturate(140%);
+    -webkit-backdrop-filter: blur(50px) saturate(140%);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 30px 70px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+    border-radius: 32px; position: relative; overflow: hidden;
+  }
+
+  header { 
+    position: relative; z-index: 5; text-align: center; max-width: 500px; width: 100%;
+    padding: 35px 24px; margin-bottom: 25px;
+  }
+  header h1 {
+    font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: clamp(34px, 8.5vw, 54px); margin: 0 0 10px;
+    background: linear-gradient(135deg, #fff 40%, #ff9ebb, #d2b4ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    line-height: 1.1; letter-spacing: -0.5px; min-height: 1.2em;
+  }
+  .signature-text {
+    font-family: 'Great Vibes', cursive; font-size: 52px; color: #ff5ea8;
+    display: block; margin-top: 5px; text-transform: none;
+    text-shadow: 0 0 20px rgba(255,94,168,0.4); -webkit-text-fill-color: initial;
+  }
+  .subtitle { font-size: 13px; color: #dcd1e0; opacity: .8; letter-spacing: 2px; margin-top: 15px; transition: opacity 0.5s; }
+
+  /* 📸 Slideshow Section */
+  .slideshow-box {
+    position: relative; z-index: 5; width: min(100%, 450px); padding: 18px; text-align: center; margin-bottom: 30px;
+  }
+  .slideshow-container {
+    width: 100%; aspect-ratio: 1/1; position: relative; border-radius: 20px; overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+  }
+  
+  .slide-wrapper {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; transition: opacity 0.8s ease-in-out;
+  }
+  .slide-wrapper.active { opacity: 1; }
+  
+  .slideshow-img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* 📷 แถบข้อเรื่องราวเวลาเอาเมาส์ชี้รูป */
+  .story-hover-tag {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(6, 1, 15, 0.85) 40%);
+    padding: 25px 15px 15px; text-align: center;
+    transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    font-size: 14px; color: #ffbee0; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    font-weight: 500; pointer-events: none;
+  }
+  .slide-wrapper:hover .story-hover-tag,
+  .slide-wrapper:active .story-hover-tag {
+    transform: translateY(0);
+  }
+
+  /* 🎂 Countdown Timer Section */
+  .countdown-box {
+    position: relative; z-index: 5; width: min(100%, 450px); padding: 20px; text-align: center; margin-bottom: 30px;
+  }
+  .countdown-title { font-size: 12px; letter-spacing: 3px; color: #ff9ebb; text-transform: uppercase; margin-bottom: 12px; font-weight: 600; }
+  .countdown-grid { display: flex; justify-content: center; gap: 15px; }
+  .count-item { background: rgba(0,0,0,0.2); padding: 10px 18px; border-radius: 16px; min-width: 80px; border: 1px solid rgba(255,255,255,0.03); }
+  .count-num { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; color: #fff; line-height: 1; }
+  .count-lbl { font-size: 11px; color: #bcaec2; margin-top: 4px; }
+
+  /* 📷 Memory Timeline Section */
+  .timeline-container { position: relative; z-index: 5; width: min(100%, 500px); margin-bottom: 35px; text-align: center; }
+  .timeline-nav { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
+  
+  /* 🌊 Liquid Button */
+  .liquid-btn {
+    position: relative; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 13px; font-weight: 600;
+    color: #fff; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 14px 10px; border-radius: 16px; cursor: pointer; overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .liquid-btn:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); border-color: rgba(255,71,145,0.3); }
+  
+  /* Main Liquid Button Core */
+  .main-love-btn {
+    position: relative; z-index: 5; font-family: 'IBM Plex Sans Thai', sans-serif; font-weight: 600; font-size: 16px;
+    color: #fff; border: none; padding: 18px 45px; border-radius: 999px; cursor: pointer; margin-bottom: 30px;
+    background: linear-gradient(135deg, #ff4791, #8d5bff, #00f0ff); background-size: 200% auto;
+    box-shadow: 0 15px 40px rgba(255,71,145,0.3); overflow: hidden; display: flex; align-items: center; gap: 10px;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-position 0.5s;
+  }
+  .main-love-btn:hover { background-position: right center; transform: scale(1.05); }
+  .main-love-btn:active { transform: scale(0.96); }
+  
+  .ripple {
+    position: absolute; background: rgba(255, 255, 255, 0.35); border-radius: 50%;
+    transform: scale(0); animation: rippleEffect 0.7s ease-out; pointer-events: none;
+  }
+  @keyframes rippleEffect { to { transform: scale(4); opacity: 0; } }
+
+  /* 🌹 Rose Bloom Canvas Block overlay */
+  .rose-overlay {
+    position: fixed; inset: 0; z-index: 10000; background: rgba(5,2,12,0.93);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.5s ease; padding: 20px;
+  }
+  .rose-overlay.show { opacity: 1; pointer-events: auto; }
+  
+  .rose-content-holder {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; width: 100%; max-width: 320px; transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .rose-content-holder.fade-out { opacity: 0; transform: scale(0.9); pointer-events: none; }
+  .rose-svg { width: 220px; height: 220px; stroke-dasharray: 1000; stroke-dashoffset: 1000; }
+  .rose-overlay.show .rose-path { animation: bloom 3.5s forwards ease-in-out; }
+  @keyframes bloom { to { stroke-dashoffset: 0; } }
+
+  /* Surprise Random Photo inside Bloom Screen */
+  .bloom-photo-wrap {
+    width: min(80vw, 280px); aspect-ratio: 1/1; border-radius: 24px; overflow: hidden;
+    box-shadow: 0 20px 45px rgba(255, 71, 145, 0.4); border: 2px solid var(--pink-glow);
+    position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0; pointer-events: none; transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .bloom-photo-wrap.reveal { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+  .bloom-photo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  
+  /* 🎵 Music Player (Spotify Style) */
+  .spotify-player {
+    position: fixed; left: 50%; bottom: 25px; transform: translateX(-50%); z-index: 999;
+    width: min(94vw, 420px); padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+  }
+  .album-wrap { position: relative; width: 44px; height: 44px; flex-shrink: 0; }
+  .vinyl-disk {
+    width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+    border: 2px solid #111; box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    animation: vinylRotate 8s linear infinite; animation-play-state: paused;
+  }
+  .vinyl-center { position: absolute; inset: 35%; background: #000; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
+  .player-info { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+  .song-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  
+  .progress-container { display: flex; align-items: center; gap: 6px; width: 100%; }
+  .progress-bar-bg { background: rgba(255,255,255,0.1); height: 4px; border-radius: 2px; flex-grow: 1; position: relative; cursor: pointer; }
+  .progress-fill { background: var(--pink-glow); width: 0%; height: 100%; border-radius: 2px; transition: width 0.1s linear; }
+  .time-lbl { font-size: 9px; color: #a69bb0; font-family: monospace; }
+  
+  .player-ctrls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .play-btn {
+    background: #fff; color: #000; border: none; width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; transition: transform 0.2s;
+  }
+  .play-btn:hover { transform: scale(1.1); }
+
+  .vol-control-wrap { display: flex; align-items: center; gap: 4px; }
+  .vol-btn { background: transparent; border: none; color: #fff; cursor: pointer; font-size: 14px; padding: 2px; opacity: 0.7; }
+  .vol-slider { width: 50px; -webkit-appearance: none; background: rgba(255,255,255,0.2); height: 4px; border-radius: 2px; outline: none; }
+  .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; border-radius: 50%; background: var(--cyan-glow); cursor: pointer; }
+
+  .eq-container { display: flex; gap: 2px; align-items: flex-end; height: 14px; width: 14px; }
+  .eq-bar { background: var(--cyan-glow); width: 2px; height: 2px; border-radius: 1px; }
+  .playing .eq-bar { animation: eqWave 0.6s infinite alternate ease-in-out; }
+  .playing .eq-bar:nth-child(2) { animation-delay: 0.15s; }
+  .playing .eq-bar:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes eqWave { 0% { height: 2px; } 100% { height: 14px; } }
+  @keyframes vinylRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* Polaroid Pop-up Modal */
+  .overlay {
+    position: fixed; inset: 0; z-index: 9999; background: rgba(4, 1, 10, 0.85); backdrop-filter: blur(20px);
+    display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .4s ease; padding: 20px;
+  }
+  .overlay.show { opacity: 1; pointer-events: auto; }
+  .polaroid { width: min(88vw, 360px); padding: 18px 18px 24px; text-align: center; }
+  
+  /* ตัวครอบรูปภาพของ Modal เพื่อรองรับการสลับรูปภาพแบบ Smooth Fade */
+  .polaroid-img-wrapper {
+    position: relative; width: 100%; aspect-ratio: 1/1; border-radius: 20px; overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+  }
+  .polaroid-img-wrapper img {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    opacity: 0; transition: opacity 0.6s ease-in-out;
+  }
+  .polaroid-img-wrapper img.active {
+    opacity: 1; z-index: 2;
+  }
+  
+  .polaroid .caption { font-size: 20px; font-weight: 600; color: #fff; margin-top: 18px; font-family: 'Cormorant Garamond', serif; }
+  .polaroid .sub { font-size: 12px; color: #ff9ebb; margin-top: 5px; letter-spacing: 1px; }
+  .close-btn {
+    margin-top: 20px; background: #fff; color: #000; border: none; padding: 10px 28px; border-radius: 999px;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.2s;
+  }
+  .close-btn:hover { transform: translateY(-1px); background: #eee; }
+
+  footer { position: relative; z-index: 5; margin-top: 25px; font-size: 10px; letter-spacing: 3px; color: #fff; opacity: .3; }
+</style>
+</head>
+<body>
+
+  <!-- 💌 Intro Envelope Layer -->
+  <div id="envelopeOverlay">
+    <div class="envelope-wrapper can-hover" id="envelope">
+      <div class="envelope-flap"></div>
+      <div class="heart-seal">❤️</div>
+      <div class="letter-inside">
+        <div class="handwritten-line line-1">ถึงเอ...</div>
+        <div class="handwritten-line line-2">ขอบคุณที่เข้ามาในชีวิตเรานะ</div>
+        <div class="handwritten-line line-3" style="color: #ff4791; font-weight: 600;">รักเอที่สุดเลยครับ ❤️</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🌌 Aurora Background Element -->
+  <div class="aurora-bg">
+    <div class="aurora-mesh"></div>
+    <div class="shooting-star" style="top: 10%; left: 20%; animation-delay: 0s;"></div>
+    <div class="shooting-star" style="top: 30%; left: 60%; animation-delay: 8s;"></div>
+    <div class="shooting-star" style="top: 15%; left: 40%; animation-delay: 15s;"></div>
+  </div>
+  <div class="noise-overlay"></div>
+  <div class="mouse-glow"></div>
+
+  <!-- Header Block -->
+  <header class="glass-panel">
+    <div class="subtitle" style="margin-top:0; margin-bottom:10px; text-transform:uppercase; font-size:10px;">For the absolute only one</div>
+    <h1 id="typewriterHeading"><span class="signature-text">My Forever</span></h1>
+    <div class="subtitle" id="randomQuoteBox" style="opacity: 0;">🌸 กำลังโหลดคำหวาน... 🌸</div>
+  </header>
+
+  <!-- 📸 Slideshow Container -->
+  <div class="slideshow-box glass-panel">
+    <div class="countdown-title" style="color: var(--pink-glow);">Our Memories ✨</div>
+    <div class="slideshow-container" id="mainSlideshow">
+      <div class="slide-wrapper active"><img src="images/1.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> รูปนี้เราชอบที่สุด เอรอยยิ้มหวานมาก ๆ</div></div>
+      <div class="slide-wrapper"><img src="images/2.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> น่ารักมาก คนอะไรน่ารักขนาดนี้</div></div>
+      <div class="slide-wrapper"><img src="images/3.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> น่ารักมาก คนอะไรน่ารักขนาดนี้</div></div>
+      <div class="slide-wrapper"><img src="images/4.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> น่ารักมาก คนอะไรน่ารักขนาดนี้</div></div>
+      <div class="slide-wrapper"><img src="images/5.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> น่ารักมาก คนอะไรน่ารักขนาดนี้</div></div>
+      <div class="slide-wrapper"><img src="images/6.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> น่ารักมาก คนอะไรน่ารักขนาดนี้</div></div>
+      <div class="slide-wrapper"><img src="images/7.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> น่ารักมาก คนอะไรน่ารักขนาดนี้</div></div>
+      <div class="slide-wrapper"><img src="images/8.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> น่ารักมาก คนอะไรน่ารักขนาดนี้</div></div>
+      <div class="slide-wrapper"><img src="images/9.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/10.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ของขวัญชิ้นนี้ เราตั้งใจทำมาเพื่อเอคนเดียวนะ</div></div>
+      <div class="slide-wrapper"><img src="images/11.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/12.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/13.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/14.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/15.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/16.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/17.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/18.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/19.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/20.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/21.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/22.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/23.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/24.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/25.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/26.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/27.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+      <div class="slide-wrapper"><img src="images/28.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> ความทรงจำแสนหวานของเราสองคน</div></div>
+    </div>
+  </div>
+
+  <!-- Countdown Timer Block -->
+  <div class="countdown-box glass-panel">
+    <div class="countdown-title">เราคบกันมาแล้ว</div>
+    <div class="countdown-grid">
+      <div class="count-item"><div class="count-num" id="cDays">00</div><div class="count-lbl">วัน</div></div>
+      <div class="count-item"><div class="count-num" id="cHours">00</div><div class="count-lbl">ชั่วโมง</div></div>
+    </div>
+  </div>
+
+  <!-- Memory Timeline Block -->
+  <div class="timeline-container glass-panel" style="padding: 24px;">
+    <div class="countdown-title" style="margin-bottom:5px; color:#50e3c2;">Memory Timeline</div>
+    <p style="font-size: 13px; color: #bbb; margin-bottom: 20px;">คลิกเลือกช่วงเวลาเพื่อย้อนอ่านความทรงจำของเราสองคน</p>
+    <div class="timeline-nav">
+      <button class="liquid-btn" onclick="openMemory(0)">บอกความรู้สึกครั้งแรก 💬</button>
+      <button class="liquid-btn" onclick="openMemory(1)">คอลคุยกันวันแรก 📞</button>
+      <button class="liquid-btn" onclick="openMemory(2)">เดทแรกของเรา 🌹</button>
+      <button class="liquid-btn" onclick="openMemory(3)">ตอนคบกันวันแรก 💖</button>
+    </div>
+  </div>
+
+  <!-- Main Trigger Action Button -->
+  <button class="main-love-btn" id="loveActionBtn">
+    <span>❤️</span> กดเพื่อเบ่งบานความรัก
+  </button>
+
+  <footer>DESIGNED WITH LOVE &nbsp;·&nbsp; 2026</footer>
+
+  <!-- Polaroid Modal Frame -->
+  <div class="overlay" id="overlay">
+    <div class="polaroid glass-panel">
+      <div class="polaroid-img-wrapper">
+        <img id="revealImg1" class="active" src="" alt="ความทรงจำรูปที่ 1">
+        <img id="revealImg2" src="" alt="ความทรงจำรูปที่ 2">
+      </div>
+      <div class="caption" id="revealCaption">หัวข้อความทรงจำ</div>
+      <div class="sub" id="revealSub">รายละเอียดสั้นๆ</div>
+      <button class="close-btn" id="closeBtn">ปิดหน้าต่าง</button>
+    </div>
+  </div>
+
+  <!-- Rose Bloom & Surprise Photo Frame -->
+  <div class="rose-overlay" id="roseOverlay">
+    <div class="rose-content-holder" id="roseContentHolder">
+      <svg class="rose-svg" viewBox="0 0 100 100" fill="none" stroke="#ff4791" stroke-width="1.5" stroke-linecap="round">
+        <path class="rose-path" d="M50,90 C50,70 45,55 50,38 C53,42 58,40 62,35 C58,45 52,48 50,55 C44,58 38,54 34,50 C40,50 46,54 50,58" />
+        <path class="rose-path" d="M50,38 C43,35 40,25 48,18 C55,12 65,18 60,28 C56,34 50,38 46,32 C42,26 48,20 54,22 C56,25 50,30 48,28" />
+        <path class="rose-path" d="M48,34 C40,30 43,20 50,22 C55,24 53,32 48,34 Z" />
+      </svg>
+      <div style="font-family:'Cormorant Garamond', serif; font-size: 24px; color: #fff; margin-top: 15px; text-shadow:0 0 10px var(--pink-glow); text-align:center;">May our love bloom forever.</div>
+    </div>
+    <div class="bloom-photo-wrap" id="bloomPhotoWrap">
+      <img id="randomBloomImg" src="" alt="สุ่มรูปความรัก">
+    </div>
+    <button class="close-btn" id="closeRoseBtn" style="margin-top: 20px; position: absolute; bottom: 40px; z-index: 10001;">ปิดรับความหวาน</button>
+  </div>
+
+  <!-- Spotify Audio Player Dashboard Panel -->
+  <div class="spotify-player glass-panel" id="playerNode">
+    <div class="album-wrap">
+      <img src="images/3.jpg" class="vinyl-disk" id="vinylImg" alt="Cover">
+      <div class="vinyl-center"></div>
+    </div>
+    <div class="player-info">
+      <div class="song-name">แดเนียลเป็นศิลปินคนแรกที่เราลงเพลงศิลปินคนเดียวกัน.mp3</div>
+      <div class="progress-container">
+        <span class="time-lbl" id="timeCurrent">0:00</span>
+        <div class="progress-bar-bg" id="progressBg">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <span class="time-lbl" id="timeTotal">3:20</span>
+      </div>
+    </div>
+    <div class="player-ctrls">
+      <div class="vol-control-wrap">
+        <button class="vol-btn" id="volDownBtn">➖</button>
+        <input type="range" class="vol-slider" id="volSlider" min="0" max="1" step="0.05" value="0.25">
+        <button class="vol-btn" id="volUpBtn">➕</button>
+      </div>
+      <div class="eq-container"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div>
+      <button class="play-btn" id="playBtn">▶</button>
+    </div>
+  </div>
+
+  <audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+
+<script>
+  const loveQuotes = [
+    "วันนี้ก็ยังรักเอเหมือนวันแรกนะ ❤️",
+    "ขอบคุณที่อยู่ข้างกันในทุก ๆ วันนะเบบี๋",
+    "รอยยิ้มของเอคือสิ่งที่เราชอบมองที่สุดในโลก 🌸",
+    "รักเอมากกว่าเมื่อวาน และจะรักน้อยกว่าวันพรุ่งนี้ ✨",
+    "อยู่เป็นความสุขของกันและกันแบบนี้ไปนาน ๆ นะครับ",
+    "รักเอที่สุดในโลกเลย รู้ตัวไหมน่ะ? 💕"
+  ];
+
+  // 💥 อัปเดตอาเรย์รูปภาพให้รองรับครบทั้ง 28 ภาพ
+  const allImagePaths = [
+    "images/1.jpg", "images/2.jpg", "images/3.jpg", "images/4.jpg", "images/5.jpg",
+    "images/6.jpg", "images/7.jpg", "images/8.jpg", "images/9.jpg", "images/10.jpg",
+    "images/11.jpg", "images/12.jpg", "images/13.jpg", "images/14.jpg", "images/15.jpg",
+    "images/16.jpg", "images/17.jpg", "images/18.jpg", "images/19.jpg", "images/20.jpg",
+    "images/21.jpg", "images/22.jpg", "images/23.jpg", "images/24.jpg", "images/25.jpg",
+    "images/26.jpg", "images/27.jpg", "images/28.jpg"
+  ];
+
+  // ---------- 📸 Slideshow Engine ----------
+  let currentSlideIndex = 0;
+  const slides = document.querySelectorAll('.slide-wrapper');
+  function nextSlide() {
+    if(slides.length === 0) return;
+    slides[currentSlideIndex].classList.remove('active');
+    currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+    slides[currentSlideIndex].classList.add('active');
+  }
+  setInterval(nextSlide, 3500);
+
+  // ---------- ✨ Mouse/Touch Tracking ----------
+  document.addEventListener('mousemove', (e) => {
+    document.documentElement.style.setProperty('--m-x', `${e.clientX}px`);
+    document.documentElement.style.setProperty('--m-y', `${e.clientY}px`);
+  });
+
+  // ---------- 🎂 Countdown Timer ----------
+  const startDate = new Date("2026-06-15T22:00:00");
+  function updateLoveTimeline() {
+    const now = new Date();
+    const diff = now - startDate;
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    document.getElementById('cDays').textContent = String(days).padStart(2, '0');
+    document.getElementById('cHours').textContent = String(hours).padStart(2, '0');
+  }
+  setInterval(updateLoveTimeline, 1000);
+  updateLoveTimeline();
+
+  // ---------- 📷 Memory Timeline Engine ----------
+  const memories = [
+    { 
+      title: "บอกความรู้สึกครั้งแรก 💬", 
+      sub: "วันนั้นเราคอลกันครับ เราก็ดูต้กต้อกกันตามปกติ แต่วันนั้นเราเจอเธรดกันเยอะครับเลยแชร์ให้กันดู ละมันมีคลิปนึงครับที่เรารีโพสทั้งคู่คือ คุยด้วยทุกวัน กุคงชอบพ่อมึงมั้ง หลังจากนั้นก็กลายเป็นสารภาพรักไปเลยครับ", 
+      images: ["images/kham1.jpg", "images/kham2.jpg"]
+    },
+    { 
+      title: "คอลคุยกันวันแรกๆ 📞", 
+      sub: "ถ้านับคอลคุยกันสองต่อสองแรกๆจริงๆ ก็คงเป็นวันที่ 30/05/69 วันนั้นผมเห็นแมพโรบอกน่าเล่นชื่อแมพ  Haunted Across Time ละเราก็เล่นด้วยกันครับ", 
+      images: ["images/pee.jpg"] 
+    },
+    { 
+      title: "เดทแรกของเรา 🌹", 
+      sub: "พึ่งผ่านมาเลยครับ วันที่ 08/07/69 วันนั้นเอไปเรียนพิเศษครับแล้วแม่มาส่งแต่เช้า เราเลยนัดกันไปดูมินเนี่ยนครับ", 
+      images: ["images/min.jpg"] 
+    },
+    { 
+      title: "ตอนคบกันวันแรก 💖", 
+      sub: "15/06/69 ดูเสต้ปครับ", 
+      images: ["images/68.jpg", "images/76.jpg"]
+    }
+  ];
+
+  let memoryInterval = null; 
+  let currentMemoryImgIndex = 0;
+  const overlay = document.getElementById('overlay');
+  const img1 = document.getElementById('revealImg1');
+  const img2 = document.getElementById('revealImg2');
+
+  function openMemory(index) {
+    clearInterval(memoryInterval);
+    const data = memories[index];
+    document.getElementById('revealCaption').textContent = data.title;
+    document.getElementById('revealSub').textContent = data.sub;
+    
+    img1.classList.add('active');
+    img2.classList.remove('active');
+    currentMemoryImgIndex = 0;
+
+    if (data.images.length >= 2) {
+      img1.src = data.images[0];
+      img2.src = data.images[1];
+      img2.style.display = "block";
+
+      memoryInterval = setInterval(() => {
+        if (currentMemoryImgIndex === 0) {
+          img1.classList.remove('active');
+          img2.classList.add('active');
+          currentMemoryImgIndex = 1;
+        } else {
+          img2.classList.remove('active');
+          img1.classList.add('active');
+          currentMemoryImgIndex = 0;
+        }
+      }, 3000);
+    } else {
+      img1.src = data.images[0];
+      img2.style.display = "none";
+    }
+    overlay.classList.add('show');
+  }
+
+  document.getElementById('closeBtn').addEventListener('click', () => {
+    overlay.classList.remove('show');
+    clearInterval(memoryInterval);
+  });
+
+  // ---------- 🌊 Liquid Control Ripple ----------
+  function initLiquidBehavior(e) {
+    const btn = e.currentTarget;
+    const circle = document.createElement('span');
+    const dialog = btn.getBoundingClientRect();
+    const diameter = Math.max(dialog.width, dialog.height);
+    const radius = diameter / 2;
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${e.clientX - dialog.left - radius}px`;
+    circle.style.top = `${e.clientY - dialog.top - radius}px`;
+    circle.classList.add('ripple');
+    const existingRipple = btn.querySelector('.ripple');
+    if (existingRipple) { existingRipple.remove(); }
+    btn.appendChild(circle);
+  }
+  document.querySelectorAll('.liquid-btn, .main-love-btn').forEach(b => b.addEventListener('click', initLiquidBehavior));
+
+  // ---------- ✨ Fireflies & Petals System ----------
+  function createFireflies() {
+    for (let i = 0; i < 15; i++) {
+      const firefly = document.createElement('div');
+      firefly.className = 'firefly';
+      firefly.style.left = Math.random() * 100 + 'vw';
+      firefly.style.top = Math.random() * 100 + 'vh';
+      firefly.style.animationDelay = Math.random() * 5 + 's';
+      document.body.appendChild(firefly);
+    }
+  }
+  createFireflies();
+
+  function makePetalsExplosion() {
+    for (let i = 0; i < 40; i++) {
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+      petal.style.left = Math.random() * 100 + 'vw';
+      petal.style.width = Math.random() * 12 + 8 + 'px';
+      petal.style.height = Math.random() * 12 + 8 + 'px';
+      petal.style.animationDuration = Math.random() * 2 + 3 + 's';
+      document.body.appendChild(petal);
+      setTimeout(() => petal.remove(), 5000);
+    }
+  }
+
+  // ---------- 🌸 Typewriter Animation Engine ----------
+  const txtToType = "รักเอที่สุดในโลก ";
+  let txtIndex = 0;
+  function startTypewriter() {
+    const heading = document.getElementById('typewriterHeading');
+    heading.innerHTML = "";
+    function type() {
+      if (txtIndex < txtToType.length) {
+        heading.innerHTML += txtToType.charAt(txtIndex);
+        txtIndex++;
+        setTimeout(type, 180);
+      } else {
+        heading.innerHTML += '<span class="signature-text">My Forever</span>';
+        const quoteBox = document.getElementById('randomQuoteBox');
+        const randomQuote = loveQuotes[Math.floor(Math.random() * loveQuotes.length)];
+        quoteBox.textContent = `🌸 ${randomQuote} 🌸`;
+        quoteBox.style.opacity = '1';
+      }
+    }
+    type();
+  }
+
+  // ---------- 🌹 Rose SVG Bloom + Photo Reveal ----------
+  const roseOverlay = document.getElementById('roseOverlay');
+  const roseContentHolder = document.getElementById('roseContentHolder');
+  const bloomPhotoWrap = document.getElementById('bloomPhotoWrap');
+  const randomBloomImg = document.getElementById('randomBloomImg');
+
+  document.getElementById('loveActionBtn').addEventListener('click', () => {
+    makePetalsExplosion();
+    roseContentHolder.classList.remove('fade-out');
+    bloomPhotoWrap.classList.remove('reveal');
+    setTimeout(() => {
+      roseOverlay.classList.add('show');
+      setTimeout(() => {
+        roseContentHolder.classList.add('fade-out');
+        // 💥 สุ่มภาพจากคลัง 28 รูปแบบไม่ซ้ำเดิมในรอบนั้น
+        const randomIndex = Math.floor(Math.random() * allImagePaths.length);
+        randomBloomImg.src = allImagePaths[randomIndex];
+        setTimeout(() => { bloomPhotoWrap.classList.add('reveal'); }, 150);
+      }, 3500); 
+    }, 350);
+  });
+  
+  document.getElementById('closeRoseBtn').addEventListener('click', () => roseOverlay.classList.remove('show'));
+
+  // ---------- 🎵 Spotify Music Engine & 💌 Envelope Controller ----------
+  const audio = document.getElementById('bgMusic');
+  const playBtn = document.getElementById('playBtn');
+  const playerNode = document.getElementById('playerNode');
+  const vinylImg = document.getElementById('vinylImg');
+  const progressFill = document.getElementById('progressFill');
+  const progressBg = document.getElementById('progressBg');
+  const timeCurrent = document.getElementById('timeCurrent');
+  const timeTotal = document.getElementById('timeTotal');
+  const volSlider = document.getElementById('volSlider');
+  const envelope = document.getElementById('envelope');
+  const envelopeOverlay = document.getElementById('envelopeOverlay');
+
+  let fadeInterval = null;
+  let targetVolume = 0.25; 
+  audio.volume = targetVolume;
+
+  function parseTime(sec) {
+    if (isNaN(sec)) return "0:00";
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+
+  function fadeIn(duration) {
+    clearInterval(fadeInterval);
+    audio.volume = 0;
+    const step = targetVolume / (duration / 50);
+    fadeInterval = setInterval(() => {
+      if (audio.volume + step >= targetVolume) {
+        audio.volume = targetVolume;
+        clearInterval(fadeInterval);
+      } else {
+        audio.volume += step;
+      }
+    }, 50);
+  }
+
+  function triggerMusicPlay() {
+    playBtn.textContent = '⏸';
+    playerNode.classList.add('playing');
+    vinylImg.style.animationPlayState = 'running';
+  }
+
+  function fadeOutEnvelopeAndEnter() {
+    envelopeOverlay.style.opacity = '0';
+    envelopeOverlay.style.transform = 'scale(1.05)';
+    setTimeout(() => {
+      envelopeOverlay.remove();
+      startTypewriter();
+    }, 1200);
+  }
+
+  envelope.addEventListener('click', function handler() {
+    envelope.classList.remove('can-hover');
+    envelope.classList.add('open');
+    audio.play().then(() => {
+      fadeIn(2000);
+      triggerMusicPlay();
+    }).catch(e => console.log(e));
+
+    setTimeout(() => { fadeOutEnvelopeAndEnter(); }, 6000);
+    envelope.removeEventListener('click', handler);
+  });
+
+  audio.addEventListener('timeupdate', () => {
+    const pct = (audio.currentTime / audio.duration) * 100;
+    progressFill.style.width = `${pct}%`;
+    timeCurrent.textContent = parseTime(audio.currentTime);
+  });
+
+  audio.addEventListener('loadedmetadata', () => { timeTotal.textContent = parseTime(audio.duration); });
+  progressBg.onclick = (e) => {
+    const coord = progressBg.getBoundingClientRect();
+    audio.currentTime = ((e.clientX - coord.left) / coord.width) * audio.duration;
+  };
+  volSlider.oninput = (e) => { audio.volume = targetVolume = parseFloat(e.target.value); };
+</script>
+</body>
+</html>
