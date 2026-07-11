@@ -567,7 +567,7 @@
     "images/26.jpg", "images/27.jpg", "images/28.jpg"
   ];
 
-  // 🎵 คลังคอลเลกชันเพลง (ปรับเปลี่ยนชื่อไฟล์ รูปหน้าปก และข้อความได้ที่นี่)
+  // 🎵 คลังคอลเลกชันเพลง
   const playlist = [
     {
       title: "Transform.mp3",
@@ -835,53 +835,49 @@
     }).catch(e => console.log(e));
   }
 
-  // สร้างปุ่มเลือกเพลงใส่ใน Pop-up
   function renderModalSongs() {
     modalSongList.innerHTML = "";
     playlist.forEach((song, index) => {
       const btn = document.createElement('button');
       btn.className = 'music-opt-btn';
       btn.innerHTML = `<img src="${song.cover}" alt="cover"> <span>${song.title}</span>`;
-      btn.onclick = () => selectAndStart(index);
+      btn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        selectAndStart(index);
+      };
       modalSongList.appendChild(btn);
     });
   }
 
-  // ฟังก์ชันทำงานหลังเลือกเพลงเสร็จ
   function selectAndStart(index) {
     currentSongIndex = index;
     loadSong(currentSongIndex);
     
-    // ซ่อน Modal เลือกเพลง
     musicSelectModal.classList.remove('show');
     
-    // เล่นเพลงทันที
-    audio.play().then(() => {
-      triggerMusicPlay();
-    }).catch(e => console.log(e));
-
-    // หายซองจดหมายและเริ่มพิมพ์เอฟเฟกต์หน้าเว็บ
     envelopeOverlay.style.opacity = '0';
     envelopeOverlay.style.transform = 'scale(1.05)';
+    
     setTimeout(() => {
       envelopeOverlay.remove();
       startTypewriter();
-    }, 1200);
+      audio.play().then(() => {
+        triggerMusicPlay();
+      }).catch(e => console.log(e));
+    }, 400);
   }
 
-  // โหลดพรีวิวเพลงแรกไว้ก่อน
   loadSong(currentSongIndex);
   renderModalSongs();
 
-  // เมื่อกดเปิดซองจดหมาย
   envelope.addEventListener('click', function handler() {
     envelope.classList.remove('can-hover');
     envelope.classList.add('open');
     
-    // รอจนจดหมายเลื่อนขึ้นเสร็จสิ้น (ประมาณ 5.5 วินาที) แล้วเด้ง Modal เลือกเพลงขึ้นมา
     setTimeout(() => {
       musicSelectModal.classList.add('show');
-    }, 5500);
+    }, 4500);
 
     envelope.removeEventListener('click', handler);
   });
