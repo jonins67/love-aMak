@@ -252,19 +252,44 @@
   .count-num { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; color: #fff; line-height: 1; }
   .count-lbl { font-size: 11px; color: #bcaec2; margin-top: 4px; }
 
-  /* 📷 Memory Timeline Section */
-  .timeline-container { position: relative; z-index: 5; width: min(100%, 500px); margin-bottom: 35px; text-align: center; }
-  .timeline-nav { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
-  
-  /* 🌊 Liquid Button */
-  .liquid-btn {
-    position: relative; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 13px; font-weight: 600;
-    color: #fff; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 14px 10px; border-radius: 16px; cursor: pointer; overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    display: flex; align-items: center; justify-content: center;
+  /* 📍 Relationship Map (Vertical Timeline) */
+  .relationship-map-box {
+    position: relative; z-index: 5; width: min(100%, 450px); padding: 25px 20px; margin-bottom: 30px;
   }
-  .liquid-btn:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); border-color: rgba(255,71,145,0.3); }
-  
+  .v-timeline { position: relative; margin: 20px auto 0; padding: 0; list-style: none; width: 100%; }
+  .v-timeline::before {
+    content: ''; position: absolute; top: 0; bottom: 0; left: 20px; width: 2px;
+    background: linear-gradient(to bottom, var(--pink-glow), var(--purple-glow), var(--cyan-glow));
+  }
+  .v-timeline-item { position: relative; margin-bottom: 25px; padding-left: 50px; text-align: left; cursor: pointer; }
+  .v-timeline-item:last-child { margin-bottom: 0; }
+  .v-timeline-badge {
+    position: absolute; top: 2px; left: 10px; width: 22px; height: 22px; border-radius: 50%;
+    background: #110724; border: 2px solid var(--pink-glow); display: flex; align-items: center; justify-content: center;
+    font-size: 10px; z-index: 2; transition: all 0.3s;
+  }
+  .v-timeline-item:hover .v-timeline-badge { transform: scale(1.2); background: var(--pink-glow); }
+  .v-timeline-content {
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+    padding: 14px 16px; border-radius: 16px; transition: all 0.3s;
+  }
+  .v-timeline-item:hover .v-timeline-content { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
+  .v-timeline-date { font-size: 12px; color: var(--pink-glow); font-weight: 600; margin-bottom: 4px; }
+  .v-timeline-text { font-size: 14px; font-weight: 600; color: #fff; }
+
+  /* 🔒 Secret Lock Box (เกมตอบคำถามด้านล่าง) */
+  .secret-lock-box {
+    position: relative; z-index: 5; width: min(100%, 450px); padding: 30px 20px; text-align: center; margin-bottom: 30px;
+  }
+  .liquid-btn {
+    font-family: 'IBM Plex Sans Thai', sans-serif; font-weight: 600; font-size: 14px;
+    color: #fff; border: none; padding: 14px 35px; border-radius: 999px; cursor: pointer;
+    background: linear-gradient(135deg, #a370ff, #ff4791); background-size: 200% auto;
+    box-shadow: 0 10px 25px rgba(163,112,255,0.25); position: relative; overflow: hidden;
+    transition: transform 0.3s, background-position 0.4s; margin-top: 15px;
+  }
+  .liquid-btn:hover { background-position: right center; transform: translateY(-2px); }
+
   /* Main Liquid Button Core */
   .main-love-btn {
     position: relative; z-index: 5; font-family: 'IBM Plex Sans Thai', sans-serif; font-weight: 600; font-size: 16px;
@@ -397,7 +422,7 @@
     </div>
   </div>
 
-  <!-- 🎵 Pop-up เลือกเพลง (จะโผล่มาหลังซองจดหมายเปิดเสร็จ) -->
+  <!-- 🎵 Pop-up เลือกเพลง -->
   <div id="musicSelectModal">
     <div class="music-select-box glass-panel">
       <div class="countdown-title" style="color: var(--pink-glow); font-size: 14px;">🎵 เลือกเพลงรักสำหรับวันนี้ 🎵</div>
@@ -427,7 +452,7 @@
 
   <!-- 📸 Slideshow Container -->
   <div class="slideshow-box glass-panel">
-    <div class="countdown-title" style="color: var(--pink-glow);">Our Memories ✨</div>
+    <div class="countdown-title" style="color: var(--pink-glow);">The cutest girl in the world ✨</div>
     <div class="slideshow-container" id="mainSlideshow">
       <div class="slide-wrapper active"><img src="images/1.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> รูปนี้เราชอบที่สุด เอรอยยิ้มหวานมาก ๆ</div></div>
       <div class="slide-wrapper"><img src="images/2.jpg" class="slideshow-img" alt="Memory"><div class="story-hover-tag"> น่ารักมาก คนอะไรน่ารักขนาดนี้</div></div>
@@ -469,16 +494,47 @@
     </div>
   </div>
 
-  <!-- Memory Timeline Block -->
-  <div class="timeline-container glass-panel" style="padding: 24px;">
-    <div class="countdown-title" style="margin-bottom:5px; color:#50e3c2;">Memory Timeline</div>
-    <p style="font-size: 13px; color: #bbb; margin-bottom: 20px;">คลิกเลือกช่วงเวลาเพื่อย้อนอ่านความทรงจำของเราสองคน</p>
-    <div class="timeline-nav">
-      <button class="liquid-btn" onclick="openMemory(0)">บอกความรู้สึกครั้งแรก 💬</button>
-      <button class="liquid-btn" onclick="openMemory(1)">คอลคุยกันวันแรก 📞</button>
-      <button class="liquid-btn" onclick="openMemory(2)">เดทแรกของเรา 🌹</button>
-      <button class="liquid-btn" onclick="openMemory(3)">ตอนคบกันวันแรก 💖</button>
-    </div>
+  <!-- 📍 Relationship Map Timeline -->
+  <div class="relationship-map-box glass-panel">
+    <div class="countdown-title" style="color: var(--cyan-glow); margin-bottom: 5px;">📍 Relationship Map</div>
+    <p style="font-size: 12px; color: #bbb; margin-bottom: 15px;">คลิกแต่ละเหตุการณ์เพื่อเปิดรูปและข้อความพิเศษ</p>
+    <ul class="v-timeline">
+      <li class="v-timeline-item" onclick="openMemory(0)">
+        <div class="v-timeline-badge">📞</div>
+        <div class="v-timeline-content">
+          <div class="v-timeline-date">30 พ.ค. 69</div>
+          <div class="v-timeline-text">คอลคุยกันวันแรก 📞</div>
+        </div>
+      </li>
+      <li class="v-timeline-item" onclick="openMemory(1)">
+        <div class="v-timeline-badge">💬</div>
+        <div class="v-timeline-content">
+          <div class="v-timeline-date">4 มิ.ย. 69</div>
+          <div class="v-timeline-text">บอกความรู้สึกครั้งแรก 💬</div>
+        </div>
+      </li>
+      <li class="v-timeline-item" onclick="openMemory(2)">
+        <div class="v-timeline-badge">❤️</div>
+        <div class="v-timeline-content">
+          <div class="v-timeline-date">15 มิ.ย. 69</div>
+          <div class="v-timeline-text">เริ่มคบกัน 🥰</div>
+        </div>
+      </li>
+      <li class="v-timeline-item" onclick="openMemory(3)">
+        <div class="v-timeline-badge">🌹</div>
+        <div class="v-timeline-content">
+          <div class="v-timeline-date">8 ก.ค. 69</div>
+          <div class="v-timeline-text">เดทแรกของเรา 🌹</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- 🔒 Secret Password Block (อัปเกรดเป็นด่านคำถาม 2 ข้อเรียบร้อย!) -->
+  <div class="secret-lock-box glass-panel">
+    <div class="countdown-title" style="color: var(--purple-glow); margin-bottom: 5px;">🔒 Secret Password</div>
+    <p style="font-size: 12px; color: #ccc;">เกมตอบคำถามพิสูจน์รักแท้ (ตอบถูกโหด)</p>
+    <button class="liquid-btn" onclick="startLoveQuiz()">กดสิ</button>
   </div>
 
   <!-- Main Trigger Action Button -->
@@ -501,7 +557,7 @@
     </div>
   </div>
 
-  <!-- Rose Bloom & Surprise Photo Frame -->
+  <!-- Rose Bloom & Surprise Photo Frame (หน้าต่างเปิดรูปพิเศษของขวัญรักแท้) -->
   <div class="rose-overlay" id="roseOverlay">
     <div class="rose-content-holder" id="roseContentHolder">
       <svg class="rose-svg" viewBox="0 0 100 100" fill="none" stroke="#ff4791" stroke-width="1.5" stroke-linecap="round">
@@ -509,12 +565,12 @@
         <path class="rose-path" d="M50,38 C43,35 40,25 48,18 C55,12 65,18 60,28 C56,34 50,38 46,32 C42,26 48,20 54,22 C56,25 50,30 48,28" />
         <path class="rose-path" d="M48,34 C40,30 43,20 50,22 C55,24 53,32 48,34 Z" />
       </svg>
-      <div style="font-family:'Cormorant Garamond', serif; font-size: 24px; color: #fff; margin-top: 15px; text-shadow:0 0 10px var(--pink-glow); text-align:center;">May our love bloom forever.</div>
+      <div id="roseOverlayText" style="font-family:'Cormorant Garamond', serif; font-size: 24px; color: #fff; margin-top: 15px; text-shadow:0 0 10px var(--pink-glow); text-align:center;">May our love bloom forever.</div>
     </div>
     <div class="bloom-photo-wrap" id="bloomPhotoWrap">
       <img id="randomBloomImg" src="" alt="สุ่มรูปความรัก">
     </div>
-    <button class="close-btn" id="closeRoseBtn" style="margin-top: 20px; position: absolute; bottom: 40px; z-index: 10001;">ปิดรับความหวาน</button>
+    <button class="close-btn" id="closeRoseBtn" style="margin-top: 20px; position: absolute; bottom: 40px; z-index: 10001;">ปิด</button>
   </div>
 
   <!-- Spotify Audio Player Dashboard Panel -->
@@ -567,23 +623,11 @@
     "images/26.jpg", "images/27.jpg", "images/28.jpg"
   ];
 
-  // 🎵 คลังคอลเลกชันเพลง
   const playlist = [
-    {
-      title: "Transform.mp3",
-      src: "music.mp3",
-      cover: "images/3.jpg"
-    },
-    {
-      title: "BestPart.mp3",
-      src: "music2.mp3", 
-      cover: "images/5.jpg"
-    },
-    {
-      title: "ดูดฝุ่น.mp3",
-      src: "music3.mp3",
-      cover: "images/10.jpg"
-    }
+    { title: "Transform.mp3", src: "music.mp3", cover: "images/3.jpg" },
+    { title: "BestPart.mp3", src: "music2.mp3", cover: "images/5.jpg" },
+    { title: "ดูดฝุ่น.mp3", src: "music3.mp3", cover: "images/10.jpg" },
+    { title: "อีกแล้ว.mp3", src: "music4.mp3", cover: "images/15.jpg" }
   ];
   let currentSongIndex = 0;
 
@@ -620,24 +664,24 @@
   // ---------- 📷 Memory Timeline Engine ----------
   const memories = [
     { 
-      title: "บอกความรู้สึกครั้งแรก 💬", 
-      sub: "วันนั้นเราคอลกันครับ เราก็ดูต้กต้อกกันตามปกติ แต่วันนั้นเราเจอเธรดกันเยอะครับเลยแชร์ให้กันดู ละมันมีคลิปนึงครับที่เรารีโพสทั้งคู่คือ คุยด้วยทุกวัน กุคงชอบพ่อมึงมั้ง หลังจากนั้นก็กลายเป็นสารภาพรักไปเลยครับ", 
-      images: ["images/kham1.jpg", "images/kham2.jpg"]
+      title: "คอลคุยกันวันแรกๆ 📞", 
+      sub: "ถ้านับคอลคุยกันสองต่อสองแรกๆจริงๆ ก็คงเป็นวันที่ 30/05/69 วันนั้นผมเห็นแมพโรบอกน่าเล่นชื่อแมพ Haunted Across Time ละเราก็เล่นด้วยกันครับ", 
+      images: ["images/pee.jpg"]
     },
     { 
-      title: "คอลคุยกันวันแรกๆ 📞", 
-      sub: "ถ้านับคอลคุยกันสองต่อสองแรกๆจริงๆ ก็คงเป็นวันที่ 30/05/69 วันนั้นผมเห็นแมพโรบอกน่าเล่นชื่อแมพ  Haunted Across Time ละเราก็เล่นด้วยกันครับ", 
-      images: ["images/pee.jpg"] 
+      title: "บอกความรู้สึกครั้งแรก 💬", 
+      sub: "วันนั้นเราคอลกันครับ เราก็ดูต้กต้อกกันตามปกติ แต่วันนั้นเราเจอเธรดกันเยอะครับเลยแชร์ให้กันดู ละมันมีคลิปนึงครับที่เรารีโพสทั้งคู่คือ คุยด้วยทุกวัน กุคงชอบพ่อมึงมั้ง หลังจากนั้นก็กลายเป็นสารภาพรักไปเลยครับ", 
+      images: ["images/kham1.jpg", "images/kham2.jpg"] 
+    },
+    { 
+      title: "ตอนคบกันวันแรก 💖", 
+      sub: "15/06/69 ดูเสต้ปครับ เริ่มต้นการเป็นแฟนกันอย่างเป็นทางการนะ", 
+      images: ["images/68.jpg", "images/76.jpg"] 
     },
     { 
       title: "เดทแรกของเรา 🌹", 
       sub: "พึ่งผ่านมาเลยครับ วันที่ 08/07/69 วันนั้นเอไปเรียนพิเศษครับแล้วแม่มาส่งแต่เช้า เราเลยนัดกันไปดูมินเนี่ยนครับ", 
-      images: ["images/min.jpg"] 
-    },
-    { 
-      title: "ตอนคบกันวันแรก 💖", 
-      sub: "15/06/69 ดูเสต้ปครับ", 
-      images: ["images/68.jpg", "images/76.jpg"]
+      images: ["images/min.jpg"]
     }
   ];
 
@@ -684,6 +728,46 @@
     overlay.classList.remove('show');
     clearInterval(memoryInterval);
   });
+
+  // ---------- 🔒 ฟังก์ชันสำหรับปุ่มเกมตอบคำถาม 2 ข้อ (วงแดง) ----------
+  function startLoveQuiz() {
+    // คำถามที่ 1
+    const ans1 = prompt("คำถามที่ 1: วันที่เราเริ่มคบกันคือวันที่เท่าไหร่\n(พิมพ์ตอบ เช่น 00/00/69 หรือ 00/00/2026)");
+    if (ans1 === null) return; // กดยกเลิก
+    
+    if (ans1 === "15/06/2026" || ans1 === "15/06/69" || ans1 === "15 มิ.ย. 69") {
+      
+      // ผ่านไปคำถามที่ 2
+      const ans2 = prompt("ถูกต้อง คมจัด\n\nคำถามที่ 2: วันเกิดโน่ (พิมพ์ตอบ เช่น 00/00/69 หรือ 00/00/2026)");
+    if (ans2 === null) return; // กดยกเลิก
+      
+       if(ans2 === "21/09/11" || ans2 === "21/09/54" || ans2 === "21/09/2554") {
+        alert("เห้ยเก่งๆๆๆ ดีดีดีดี กดปุ่มok");
+        
+        // เอฟเฟกต์เปิดหน้าต่างรูปพิเศษโชว์ความลับความรัก
+        makePetalsExplosion();
+        document.getElementById('roseOverlayText').innerHTML = "โหดจัดจัดจัด! ✨<br><span style='font-size:16px; color:#ff9ebb;'>อะให้</span>";
+        document.getElementById('roseContentHolder').classList.remove('fade-out');
+        document.getElementById('bloomPhotoWrap').classList.remove('reveal');
+        
+        setTimeout(() => {
+          document.getElementById('roseOverlay').classList.add('show');
+          setTimeout(() => {
+            document.getElementById('roseContentHolder').classList.add('fade-out');
+            // สุ่มรูปพิเศษจากคลังมาแสดง
+            document.getElementById('randomBloomImg').src = "images/secret2.jpg";
+            setTimeout(() => { document.getElementById('bloomPhotoWrap').classList.add('reveal'); }, 150);
+          }, 2000); 
+        }, 350);
+
+      } else {
+        alert("วันเกิดผิดได้งัย😡😡");
+      }
+      
+    } else {
+      alert("คำถามแรกก็ซะแล้ว ผิดได้งัย😡😡😭😭");
+    }
+  }
 
   // ---------- 🌊 Liquid Control Ripple ----------
   function initLiquidBehavior(e) {
@@ -758,6 +842,7 @@
 
   document.getElementById('loveActionBtn').addEventListener('click', () => {
     makePetalsExplosion();
+    document.getElementById('roseOverlayText').textContent = "May our love bloom forever.";
     roseContentHolder.classList.remove('fade-out');
     bloomPhotoWrap.classList.remove('reveal');
     setTimeout(() => {
@@ -877,7 +962,7 @@
     
     setTimeout(() => {
       musicSelectModal.classList.add('show');
-    }, 4500);
+    }, 6250);
 
     envelope.removeEventListener('click', handler);
   });
